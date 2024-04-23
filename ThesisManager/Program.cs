@@ -1,5 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+using ThesisManager.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
+//Connect to DB
+builder.Services.AddDbContext<AppDbContext>(option => {
+    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+
+});
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
