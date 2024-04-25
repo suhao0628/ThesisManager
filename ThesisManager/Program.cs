@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ThesisManager.Data;
 using Microsoft.AspNetCore.Identity;
+using ThesisManager.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,18 @@ builder.Services.AddDbContext<AppDbContext>(option => {
 
 });
 
-builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<AppDbContext>();
+builder.Services.AddIdentity<User, IdentityRole>(options =>
+{
+
+    options.SignIn.RequireConfirmedAccount = false;
+    options.User.RequireUniqueEmail = true;
+    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+}).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 

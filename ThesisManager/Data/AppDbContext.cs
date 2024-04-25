@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ThesisManager.Models;
 
@@ -9,6 +10,21 @@ namespace ThesisManager.Data
         public AppDbContext(DbContextOptions<AppDbContext> options)
            : base(options)
         {
+        }
+        public DbSet<Professor> Professors { get; set; }
+        public DbSet<Student> Students { get; set; }
+        public DbSet<Group> Groups { get; set; }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder
+                    .Entity<IdentityRole>()
+                .HasData(
+                    new IdentityRole { Name = "Administrator", NormalizedName = "ADMINISTRATOR" },
+                    new IdentityRole { Name = "Professor", NormalizedName = "PROFESSOR" },
+                    new IdentityRole { Name = "Student", NormalizedName = "STUDENT" }
+                );
         }
     }
 }
