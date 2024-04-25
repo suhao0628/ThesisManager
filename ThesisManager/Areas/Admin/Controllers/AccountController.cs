@@ -53,5 +53,82 @@ namespace ThesisManager.Areas.Admin.Controllers
 
             return View(userList);
         }
+        [HttpGet]
+        public async Task<IActionResult> EditUser(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var model = new UserVM
+            {
+                UserId = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Avatar = user.Avatar,
+                Role = userRoles.FirstOrDefault()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditUser(UserVM model)
+        {
+            var user = await _userManager.FindByIdAsync(model.UserId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                TempData["success"] = "User Updated Successfully";
+                return RedirectToAction("Users");
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+                TempData["error"] = "Error Occurs...";
+                return View(model);
+            }
+        }
+        //[HttpDelete]
+        public async Task<IActionResult> DeleteUser(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (result.Succeeded)
+            {
+                TempData["success"] = "User deleted successfully.";
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+                TempData["error"] = "An error occurred while deleting the user.";
+            }
+
+            return RedirectToAction("Users");
+        }
     }
 }
