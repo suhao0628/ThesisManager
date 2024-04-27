@@ -130,5 +130,87 @@ namespace ThesisManager.Areas.Admin.Controllers
 
             return RedirectToAction("Users");
         }
+        [HttpGet]
+        public async Task<IActionResult> AssignRole(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var roles = _roleManager.Roles.ToList();
+
+            var model = new RoleVM
+            {
+                UserId = user.Id,
+                User = user,
+                Roles = roles,
+                UserRoles = (List<string>)await _userManager.GetRolesAsync(user)
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AssignRole(string userId, string roleName)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var roleExists = await _roleManager.RoleExistsAsync(roleName);
+            if (!roleExists)
+            {
+                ModelState.AddModelError("", $"Role '{roleName}' does not exist.");
+                TempData["error"] = "Error Occurs...";
+                return View();
+            }
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, userRoles);
+            foreach (var currentRole in userRoles)
+            {
+                if (currentRole == "Student")
+                {
+                    var student = await _context.Students.FirstOrDefaultAsync(s => s.UserId == user.Id);
+                    if (student != null)
+                    {
+                        _context.Students.Remove(student);
+                    }
+                }
+                else if (currentRole == "Professor")
+                {
+                    var professor = await _context.Professors.FirstOrDefaultAsync(p => p.UserId == user.Id);
+                    if (professor != null)
+                    {
+                        _context.Professors.Remove(professor);
+                    }
+                }
+            }
+            if (roleName == "Student")
+            {
+
+                var newStudent = new Student
+                {
+                    UserId = user.Id,
+                };
+                await _context.Students.AddAsync(newStudent);
+            }
+            else if (roleName == "Professor")
+            {
+                var newProfessor = new Professor { UserId = user.Id, };
+
+                await _context.Professors.AddAsync(newProfessor);
+            }
+            await _userManager.AddToRoleAsync(user, roleName);
+
+            TempData["success"] = "Assigning Role Successfully";
+
+            return RedirectToAction("Users");
+        }
+
     }
 }
