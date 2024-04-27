@@ -1,0 +1,97 @@
+﻿@model IEnumerable<Group>
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Groups Management</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <a class="btn btn-primary" asp-area="Admin" asp-controller="Group" asp-action="Create">Create Group</a>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="row" id="small-box-container">
+        @foreach (var group in Model)
+        {
+            <div class="col-lg-3 col-6 small-box-wrapper" data-group-id="@group.Id">
+                <div class="small-box @group.BGColor">
+                    <div class="inner">
+                        <div style="display: flex; justify-content: space-between;">
+                            <a asp-area="Admin" asp-controller="Group" asp-action="Details" asp-route-id="@group.Id" class="btn @group.BGColor">
+                                <h3>@group.GroupName</h3>
+                            </a>
+                            <button type="button" class="btn @group.BGColor" id="deleteGroupBtn" data-group-id="@group.Id">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <a asp-area="Admin" asp-controller="Group" asp-action="Details" asp-route-id="@group.Id" class="small-box-footer">
+                        More info <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('button[data-group-id]').click(function () {
+                var groupId = $(this).data('group-id');
+
+                $.ajax({
+                    url: '/Admin/Group/GetStudentCount',
+                    type: 'GET',
+                    data: { groupId: groupId },
+                    success: function (response) {
+                        var studentCount = response.studentCount;
+
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            html: `This group has <span style="color: red;">${studentCount}</span> students. Are you sure to delete it?`,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Yes, delete it!',
+                            cancelButtonText: 'No, cancel!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                deleteGroup(groupId);
+                            }
+                        });
+                    },
+                    error: function () {
+                        toastr.error('Failed to retrieve student count.');
+                    }
+                });
+            });
+
+            function deleteGroup(groupId) {
+                $.ajax({
+                    url: '/Admin/Group/Delete?id=' + groupId,
+                    type: 'POST',
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function () {
+                        toastr.success('Group deleted successfully');
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                    },
+                    error: function () {
+                        toastr.error('Failed to delete group');
+                    }
+                });
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+}
