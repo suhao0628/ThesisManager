@@ -1,0 +1,74 @@
+﻿@model RoleVM
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Assign Role</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-controller="Account" asp-action="Users">Users</a></li>
+                    <li class="breadcrumb-item active">Role</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">User Information</h3>
+                    </div>
+                    <form asp-action="AssignRole" asp-route-userId="@Model.UserId" method="post">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">User Name</label>
+                                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="UserName" disabled
+                                       value="@($"{Model.User.FirstName} {Model.User.LastName}")">
+                            </div>
+                            <div class="form-group">
+
+                                <label for="exampleInputEmail1">Email </label>
+
+                                <input type="email" class="form-control" id="exampleInputEmail1" asp-for="@Model.User.Email" readonly />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Select Role</label>
+
+
+                                <select class="form-control select2" style="width: 100%;" data-placeholder="Select a Role" id="roleName" name="roleName">
+                                    @foreach (var role in Model.Roles)
+                                    {
+                                        <option value="@role.Name">@role.Name</option>
+
+                                    }
+
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">Assign Role</button>
+
+                            <a asp-controller="Account" asp-action="Users" class="btn btn-secondary ml-2">Cancel</a>
+                            @* <a href="javascript:history.back()" class="btn btn-secondary ml-2">Cancel</a> *@
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
