@@ -1,0 +1,81 @@
+﻿@model GroupCreateVM
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Create Group</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-controller="Group" asp-action="Index">Group</a></li>
+                    <li class="breadcrumb-item active">Create</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Group Information</h3>
+                    </div>
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label asp-for="GroupName"></label>
+                                <input asp-for="GroupName" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="BGColor">Background Color:</label>
+                                <div>
+                                    <div class="color-option" style="display: inline-block; margin-right: 5px;">
+                                        <input type="radio" asp-for="BGColor" value="bg-primary" id="bg-primary" />
+                                        <label for="bg-primary" style="background-color: #007bff; width: 30px; height: 30px; display: inline-block; border: 1px solid black; cursor: pointer;"></label>
+                                    </div>
+                                    <div class="color-option" style="display: inline-block; margin-right: 5px;">
+                                        <input type="radio" asp-for="BGColor" value="bg-secondary" id="bg-secondary" />
+                                        <label for="bg-secondary" style="background-color: #6c757d; width: 30px; height: 30px; display: inline-block; border: 1px solid black; cursor: pointer;"></label>
+                                    </div>
+                                    <div class="color-option" style="display: inline-block; margin-right: 5px;">
+                                        <input type="radio" asp-for="BGColor" value="bg-success" id="bg-success" />
+                                        <label for="bg-success" style="background-color: #28a745; width: 30px; height: 30px; display: inline-block; border: 1px solid black; cursor: pointer;"></label>
+                                    </div>
+                                    <div class="color-option" style="display: inline-block; margin-right: 5px;">
+                                        <input type="radio" asp-for="BGColor" value="bg-danger" id="bg-danger" />
+                                        <label for="bg-danger" style="background-color: #dc3545; width: 30px; height: 30px; display: inline-block; border: 1px solid black; cursor: pointer;"></label>
+                                    </div>
+                                    <div class="color-option" style="display: inline-block; margin-right: 5px;">
+                                        <input type="radio" asp-for="BGColor" value="bg-warning" id="bg-warning" />
+                                        <label for="bg-warning" style="background-color: #ffc107; width: 30px; height: 30px; display: inline-block; border: 1px solid black; cursor: pointer;"></label>
+                                    </div>
+                                    <div class="color-option" style="display: inline-block; margin-right: 5px;">
+                                        <input type="radio" asp-for="BGColor" value="bg-info" id="bg-info" />
+                                        <label for="bg-info" style="background-color: #17a2b8; width: 30px; height: 30px; display: inline-block; border: 1px solid black; cursor: pointer;"></label>
+                                    </div>
+                                    <div class="color-option" style="display: inline-block; margin-right: 5px;">
+                                        <input type="radio" asp-for="BGColor" value="bg-light" id="bg-light" />
+                                        <label for="bg-light" style="background-color: #f8f9fa; width: 30px; height: 30px; display: inline-block; border: 1px solid black; cursor: pointer;"></label>
+                                    </div>
+                                    <div class="color-option" style="display: inline-block; margin-right: 5px;">
+                                        <input type="radio" asp-for="BGColor" value="bg-dark" id="bg-dark" />
+                                        <label for="bg-dark" style="background-color: #343a40; width: 30px; height: 30px; display: inline-block; border: 1px solid black; cursor: pointer;"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <a asp-controller="Group" asp-action="Index" class="btn btn-secondary ml-2">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -107,7 +107,23 @@ namespace ThesisManager.Areas.Admin.Controllers
         }
 
 
+        [HttpGet]
+        public IActionResult GetStudentCount(int groupId)
+        {
+            var group = _context.Groups
+                .Include(g => g.Students) 
+                .FirstOrDefault(g => g.Id == groupId);
 
+            if (group == null)
+            {
+                return NotFound();
+            }
+
+            int studentCount = group.Students.Count;
+
+            return Json(new { studentCount });
+        }
         
+
     }
 }

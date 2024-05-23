@@ -12,5 +12,8 @@ namespace ThesisManager.Models
         [ForeignKey(nameof(User))]
         public string UserId { get; set; }
         public virtual User User { get; set; }
+
+        public virtual Group? Group { get; set; }
+
     }
 }
