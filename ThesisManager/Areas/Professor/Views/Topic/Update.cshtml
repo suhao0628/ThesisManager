@@ -1,0 +1,172 @@
+﻿@model TopicCreateVM
+
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Edit Topic </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-controller="Topic" asp-action="Index">Topics</a></li>
+                    <li class="breadcrumb-item active">Edit</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-info">
+                    <div class="card-header">
+                    </div>
+
+                    <form method="post" asp-action="Update">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label asp-for="Title">Title</label>
+                                <input asp-for="Title" class="form-control" />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Description">Description</label>
+                                <textarea id="summernote" asp-for="Description" class="form-control">
+                                </textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label asp-for="Categories">Categories</label>
+
+                                <div class="select2-info">
+                                    <select asp-for="Categories" id="categorySelect" class="select2" multiple="multiple" data-dropdown-css-class="select2-info" style="width: 100%;">
+                                        @foreach (var category in ViewData["Categories"] as List<Category>)
+                                        {
+                                            if (Model.Categories.Contains(category.Name))
+                                            {
+                                                <option value="@category.Name" selected>@category.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@category.Name">@category.Name</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+
+
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Categories">New Categories</label>
+                                <div id="categoriesContainer">
+                                </div>
+                                <button type="button" class="btn btn-secondary" id="addCategoryButton">Add Category</button>
+                            </div>
+
+                            <input type="hidden" asp-for="Categories" id="categoriesHidden" name="Categories" />
+                        </div>
+
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-info">Update</button>
+                            <a asp-controller="Topic" asp-action="Index" class="btn btn-secondary ml-2">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        var formChanged = false;
+        var categoriesContainer = document.getElementById('categoriesContainer');
+        var addCategoryButton = document.getElementById('addCategoryButton');
+        var categoriesHidden = document.getElementById('categoriesHidden');
+
+        addCategoryButton.addEventListener('click', function () {
+            var newCategoryContainer = document.createElement('div');
+            newCategoryContainer.className = 'input-group mb-2';
+
+            var newCategoryInput = document.createElement('input');
+            newCategoryInput.type = 'text';
+            newCategoryInput.className = 'form-control';
+
+            var deleteButton = document.createElement('button');
+            deleteButton.type = 'button';
+            deleteButton.className = 'btn btn-danger ml-2';
+            deleteButton.innerHTML = 'Delete';
+
+            deleteButton.addEventListener('click', function () {
+                categoriesContainer.removeChild(newCategoryContainer);
+            });
+
+            newCategoryContainer.appendChild(newCategoryInput);
+            newCategoryContainer.appendChild(deleteButton);
+
+            categoriesContainer.appendChild(newCategoryContainer);
+
+            formChanged = true;
+        });
+
+        // Check for form changes before leaving the page
+        window.addEventListener('beforeunload', function (e) {
+            if (formChanged) {
+                var confirmationMessage = 'You have unsaved changes! Are you sure you want to leave?💬';
+                (e || window.event).returnValue = confirmationMessage;
+                return confirmationMessage;
+            }
+        });
+
+
+        window.addEventListener('load', function () {
+            console.log('Event listener added');
+            var formElement = document.querySelector('form[action="/Professor/Topic/Update/@Model.Id"]');
+            console.log('Form element:', formElement);
+            formElement.addEventListener('submit', function () {
+                var categories = [];
+                var inputs = categoriesContainer.querySelectorAll('input.form-control');
+
+                inputs.forEach(function (input) {
+                    if (input.value.trim() !== '') {
+                        categories.push(input.value.trim());
+                    }
+                });
+                var categoriesString = categories.join(',');
+
+                categoriesHidden.value = categoriesString;
+
+                console.log("Categories Hidden Value:", categoriesHidden.value);
+                // categoriesHidden.value = JSON.stringify(categories);
+                // Check for changes in form inputs
+
+                formChanged = false;
+            });
+            formElement.addEventListener('input', function () {
+                formChanged = true;
+            });
+        });
+    </script>
+    <script>
+        $(function () {
+            $('#summernote').summernote();
+        });
+    </script>
+    <script>
+
+        $(function () {
+
+            $('.select2').select2()
+
+            $('.select2bs4').select2({
+                theme: 'bootstrap4'
+            })
+        })
+
+    </script>
+
+}
