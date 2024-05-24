@@ -172,20 +172,6 @@ namespace ThesisManager.Areas.Professor.Controllers
 
             foreach (var categoryName in request.Categories)
             {
-                //if (categoryName != null && existingCategoryNames.Contains(categoryName))
-                //{
-                //    var category = existingCategories.FirstOrDefault(c => c.Name == categoryName);
-                //    categories.Add(category);
-                //}
-                //else
-                //{
-                //    var category = new Category
-                //    {
-                //        Name = categoryName
-                //    };
-                //    _context.Categories.Add(category);
-                //    existingCategories.Add(category);
-                //}
                 Category category;
                 if (categoryName != null)
                 {
@@ -233,6 +219,62 @@ namespace ThesisManager.Areas.Professor.Controllers
         }
         #endregion
 
+        #region Topic Details 
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            var topic = _context.Topics
+                .Include(t => t.Author)
+                .Include(t => t.Categories)
+                .FirstOrDefault(t => t.Id == id);
+
+            if (topic == null)
+            {
+                return NotFound();
+            }
+
+            return View(topic);
+        }
+        #endregion
+
+        #region Filter Topic
+        [HttpGet]
+        public IActionResult FilterTopics(string category, string professorName, TopicStatus? status)
+        {
+
+            var topics = _context.Topics
+                .Include(t => t.Author)
+                .Include(t => t.Categories)
+                .AsQueryable(); 
+
+            if (!string.IsNullOrEmpty(category))
+            {
+                topics = topics.Where(t => t.Categories.Any(c => c.Name == category));
+            }
+
+            if (!string.IsNullOrEmpty(professorName))
+            {
+                topics = topics.Where(t => t.Author.FirstName + " " + t.Author.LastName == professorName);
+            }
+
+            if (status != null)
+            {
+                topics = topics.Where(t => t.TStatus == status);
+            }
+
+            var filteredTopics = topics.ToList();
+            var viewModel = new TopicListVM
+            {
+                Topics = filteredTopics,
+                Categories = GetAllCategories(),
+                Professors = GetAllProfessors()
+            };
+
+            return View("Index", viewModel);
+        }
+
+        #endregion
+
         #region utility
         private User GetCurrentUser()
         {
@@ -241,6 +283,13 @@ namespace ThesisManager.Areas.Professor.Controllers
         private List<string> GetAllCategories()
         {
             return _context.Categories.Select(c => c.Name).ToList();
+        }
+        private List<string> GetAllProfessors()
+        {
+            var professorNames = _context.Professors.Select(p => $"{p.User.FirstName} {p.User.LastName}").ToList();
+
+            return professorNames;
+
         }
         #endregion
     }

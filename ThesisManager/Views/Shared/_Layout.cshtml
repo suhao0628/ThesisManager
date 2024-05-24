@@ -203,7 +203,26 @@
                                 </ul>
                             </li>
                         }
-                        
+                        @if (User.IsInRole("Professor"))
+                        {
+                            <li class="nav-item menu-open">
+                                <a class="nav-link @(currentUrl.StartsWith("/Professor") ? "active" : "")">
+                                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                                    <p>
+                                        Menu
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a class="nav-link @(currentUrl.StartsWith("/Professor/Topic")  ? "active" : "")" asp-area="Professor" asp-controller="Topic" asp-action="Index">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Manage Topics</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                        }
                     </ul>
                 </nav>
             </div>
